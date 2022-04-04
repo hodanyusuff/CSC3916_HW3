@@ -8,50 +8,23 @@ chai.should();
 
 chai.use(chaiHttp);
 
-let login_details = {
-    name: 'test',
-    username: 'email@email.com',
-    password: '123@abc'
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+try {
+    mongoose.connect( process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true}, () =>
+        console.log("connected"));
+}catch (error) {
+    console.log("could not connect");
 }
 
-describe('Register, Login and Call Test Collection with Basic Auth and JWT Auth', () => {
-   beforeEach((done) => { //Before each test initialize the database to empty
-       //db.userList = [];
-
-       done();
-    })
-
-    after((done) => { //after this test suite empty the database
-        //db.userList = [];
-        User.deleteOne({ name: 'test'}, function(err, user) {
-            if (err) throw err;
-        });
-        done();
-    })
-
-    //Test the GET route
-    describe('/signup', () => {
-        it('it should register, login and check our token', (done) => {
-          chai.request(server)
-              .post('/signup')
-              .send(login_details)
-              .end((err, res) =>{
-                console.log(JSON.stringify(res.body));
-                res.should.have.status(200);
-                res.body.success.should.be.eql(true);
-                //follow-up to get the JWT token
-                chai.request(server)
-                    .post('/signin')
-                    .send(login_details)
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.have.property('token');
-                        let token = res.body.token;
-                        console.log(token);
-                        done();
-                    })
-              })
-        })
-    });
+//Movie schema
+var MovieSchema = new Schema({
+    title: { type: String, required: true, index: { unique: true }},
+    releaseDate: { type: Number, min: [1900, 'Must be greater than 1899'], max: [2100, 'Must be less than 2100']},
+    genre: {type: string, required: true, index: {unique: true}},
+    actors: {type: string, required: true, index: {unique: true}},
 
 });
+
+module.exports = mongoose.model('Movie', MovieSchema);
