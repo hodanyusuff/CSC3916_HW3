@@ -34,50 +34,45 @@ function getJSONObjectForMovieRequirement(req) {
     return json;
 }
 
-router.post('/signup', function(req, res) {
-    if (!req.body.username || !req.body.password) {
-        res.json({success: false, msg: 'Please include both username and password to signup.'})
-    } else {
-        var user = new User();
-        user.name = req.body.name;
-        user.username = req.body.username;
-        user.password = req.body.password;
-
-        user.save(function(err){
-            if (err) {
-                if (err.code == 11000)
-                    return res.json({ success: false, message: 'A user with that username already exists.'});
-                else
-                    return res.json(err);
+router.route('/movie')// this is all movies
+    .post(authController.isAuthenticated, function(req, res) {
+            console.log(req.body);
+            res = res.status(200);
+            if(req.get('content-Type')) {
+                res = res.type(req.get('content-Type'));
             }
-
-            res.json({success: true, msg: 'Successfully created new user.'})
-        });
-    }
-});
-
-router.post('/signin', function (req, res) {
-    var userNew = new User();
-    userNew.username = req.body.username;
-    userNew.password = req.body.password;
-
-    User.findOne({ username: userNew.username }).select('name username password').exec(function(err, user) {
-        if (err) {
-            res.send(err);
+            var o = getJSONObjectForMovieRequirement(req);
+            res.json(o);
         }
+    )
+    .get(authJwtController.isAuthenticated, function (req, res){
+            console.log(req.body);
+            res = res.status(200);
+            if(req.get('content-Type')) {
+                res = res.type(req.get('content-Type'));
+            }
+            var o = getJSONObjectForMovieRequirement(req);
+            res.json(o);
+        }
+    );
+router.route('/movie/:movieId')//specific movie
+    .delete(authController.isAuthenticated, function(req, res) {
+            const movie = movie.find(movie => movie.id.toString() === req.params.id);
+            res.status(200).json(movie);
+        }
+    )
+    .put(authjwtController.isAuthenticated, function(req, res) {
+            const movie = movie.find(movie => movie.id.toString() === req.params.id);
+            res.status(200).json(movie);
+        }
+    )
+    .get(authjwtController.isAuthenticated, function(req, res) {
+            const movie = movie.find(movie => movie.id.toString() === req.params.id);
+            res.status(200).json(movie);
+        }
+    );
 
-        user.comparePassword(userNew.password, function(isMatch) {
-            if (isMatch) {
-                var userToken = { id: user.id, username: user.username };
-                var token = jwt.sign(userToken, process.env.SECRET_KEY);
-                res.json ({success: true, token: 'JWT ' + token});
-            }
-            else {
-                res.status(401).send({success: false, msg: 'Authentication failed.'});
-            }
-        })
-    })
-});
+
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
