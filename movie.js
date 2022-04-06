@@ -1,15 +1,10 @@
-let envPath = __dirname + "/../.env"
-require('dotenv').config({path:envPath});
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let server = require('../server');
-let User = require('../Users');
-chai.should();
 
-chai.use(chaiHttp);
+
+
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
 
 try {
     mongoose.connect( process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true}, () =>
@@ -28,3 +23,5 @@ var MovieSchema = new Schema({
 });
 
 module.exports = mongoose.model('Movie', MovieSchema);
+
+
