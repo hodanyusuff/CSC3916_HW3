@@ -12,7 +12,6 @@ var jwt = require('jsonwebtoken');
 var cors = require('cors');
 var User = require('./Users');
 var Movie = require('./Movie');
-var Review = require('./Review');
 
 
 
@@ -27,17 +26,7 @@ app.use(passport.initialize());
 
 var router = express.Router();
 
-//function getJSONObjectForMovieRequirement(req) {
-  //  var json = {
-     //   headers: "No headers",
-     //   key: process.env.UNIQUE_KEY,
-       // body: "No body"
-   // };
-   // if (req.headers != null) {
-      //  json.headers =req.headers;
-    //}
-  //  return json;
-//}
+
 router.post('/signup', function(req,res){
 
     if (!req.body.username || !req.body.password) {
@@ -85,43 +74,6 @@ router.post('/signin', function (req,res){
         })
     })
 });
-
-
-router.post('/review', function(req,res){
-
-    if (!req.body.qoute || !req.body.rating) {
-        res.json({success: false, msg: 'please include both qoute and rating to review.'})
-    } else {
-        var review = new Review();
-        review.name = req.body.name;
-        review.qoute = req.body.qoute;
-        review.rating = req.body.rating;
-
-        review.save( function(err) {
-            if (err) {
-                if (err.code == 11000)
-                    return res.json({success: false, message: 'A review with that qoute already exists.'});
-                else
-                    return res.json(err);
-
-            }
-            res.json({success: true, msg: 'successfully created new review.'})
-        });
-    }
-});
-
-
-router.get('/review', function (req,res){
-
-    Review.find().select('name qoute rating').exec( function(err, review) {
-        if (err) {
-            res.send(err);
-        }
-
-        res.json (review)
-
-        })
-    })
 
 router.post('/movie', function(req,res){
 
