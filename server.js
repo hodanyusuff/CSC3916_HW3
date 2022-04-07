@@ -59,8 +59,9 @@ router.post('/signin', function (req,res){
             res.send(err);
         }
 
-
-         const User = await User.findOne({_id: req.user.userId});
+          var user = async 
+        User();
+        const User = await User.findOne({_id: req.user.userId});
         if (!user) {
             throw new CustomError.UserNotFound();
         }
