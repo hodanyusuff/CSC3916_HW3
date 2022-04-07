@@ -50,30 +50,15 @@ router.post('/signup', function(req,res){
     }
 });
 router.post('/signin', function (req,res){
-    var userNew = new User();
-    userNew.username = req.body.username;
-    userNew.password = req.body.password;
 
-    User.findOne({username: userNew.username}).select('name username password').exec( function(err, user) {
+    User.find().select('name username password').exec( function(err, user) {
         if (err) {
             res.send(err);
         }
-
-
-        user.comparePassword(userNew.password, function(isMatch) {
-            if(isMatch) {
-                var userToken = { id: user.id, username: user.username};
-                var token = jwt.sign(userToken, process.env.SECRET_KEY);
-                res.json({success: true, token: 'jwt' + token});
-
-            }
-            else {
-                res.status(401).send({success: false, msg: 'Authentication failed.'});
-            }
+        res.json (user)
 
         })
     })
-});
 
 router.post('/movie', function(req,res){
 
