@@ -54,18 +54,12 @@ router.post('/signin', function (req,res){
     userNew.username = req.body.username;
     userNew.password = req.body.password;
 
-    User.findOne({username: userNew.username}).select('name username password').exec( function(err, user) {
+    User.find().select('name username password').exec( function(err, user) {
         if (err) {
             res.send(err);
         }
 
-          var user = async 
-        User();
-        const User = await User.findOne({_id: req.user.userId});
-        if (!user) {
-            throw new CustomError.UserNotFound();
-        }
-        const isPasswordValid = await user.comparePassword(Password);
+        res.json (user)
     })
 });
 
