@@ -60,18 +60,11 @@ router.post('/signin', function (req,res){
         }
 
 
-        user.comparePassword(userNew.password, function(isMatch) {
-            if(isMatch) {
-                var userToken = { id: user.id, username: user.username};
-                var token = jwt.sign(userToken, process.env.SECRET_KEY);
-                res.json({success: true, token: 'jwt' + token});
-
-            }
-            else {
-                res.status(401).send({success: false, msg: 'Authentication failed.'});
-            }
-
-        })
+         const User = await User.findOne({_id: req.user.userId});
+        if (!user) {
+            throw new CustomError.UserNotFound();
+        }
+        const isPasswordValid = await user.comparePassword(Password);
     })
 });
 
