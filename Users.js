@@ -33,6 +33,7 @@ UserSchema.pre('save', function(next){
     });
 });
 
+
 UserSchema.methods.comparePassword = function (password, callback) {
     var user = this;
     bcrypt.compare(password, user.password, function(err, isMatch) {
