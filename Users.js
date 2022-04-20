@@ -7,7 +7,7 @@ try{
     mongoose.connect(process.env.DB, { useNewUrlParser: true, userUnifiedTopology: true }, () =>
     console.log("connected));
 }catch (error) {
-    console.log("could not connect");
+   console.log("could not connect");
 }
 mongoose.set('useCreateIndex', true);
 
